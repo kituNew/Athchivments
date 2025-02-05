@@ -35,9 +35,11 @@ private enum UIConstants {
 }
 
 class ProfileViewController: UIViewController {
-    
     private var cardBottomConstraint: NSLayoutConstraint!
+    private var collectionViewTopConstraint: NSLayoutConstraint!
     private var isCarColabsed: Bool = true
+    
+    private let atcivments = Atcivment.demoData
     
     private let cardView: UIView = {
         let view = UIView()
@@ -47,6 +49,20 @@ class ProfileViewController: UIViewController {
         view.layer.shadowOpacity = UIConstants.cardShadowOpacity
         view.layer.shadowRadius = UIConstants.cardCornerRadius
         view.layer.shadowOffset = UIConstants.cardShadowOffset
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = UIConstants.collectionItemSize
+        layout.minimumInteritemSpacing = UIConstants.collectionMinimumInteritemSpacing
+        layout.minimumLineSpacing = UIConstants.collectionMinimumLineSpacing
+        layout.sectionInset = UIConstants.collectionSectionInset
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.backgroundColor = .clear
+        view.showsHorizontalScrollIndicator = false
+        view.isScrollEnabled = false
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -84,6 +100,7 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemCyan
         setupUI()
+        setupCollectionView()
     }
     
     private func setupUI() {
@@ -95,6 +112,7 @@ class ProfileViewController: UIViewController {
         
         cardView.addSubview(profileStackView)
         view.addSubview(cardView)
+        view.addSubview(collectionView)
         
         cardView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleCardTap)))
         
@@ -102,6 +120,7 @@ class ProfileViewController: UIViewController {
         let stackViewBottomPadding: CGFloat = 16
         let initialCardPosition: CGFloat = -(nameLabelHeight + stackViewBottomPadding + view.safeAreaInsets.bottom)
         cardBottomConstraint = cardView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: initialCardPosition)
+        collectionViewTopConstraint = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UIConstants.cardViewHeight)
         
         NSLayoutConstraint.activate([
             cardBottomConstraint,
@@ -114,8 +133,22 @@ class ProfileViewController: UIViewController {
             profileStackView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
             
             avatarImageView.widthAnchor.constraint(equalToConstant: UIConstants.avatarImageSize),
-            avatarImageView.heightAnchor.constraint(equalToConstant: UIConstants.avatarImageSize)
+            avatarImageView.heightAnchor.constraint(equalToConstant: UIConstants.avatarImageSize),
+            
+            collectionViewTopConstraint,
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        
+        cardView.layer.zPosition = 1
+    }
+    
+    private func setupCollectionView() {
+        collectionView.register(AtcivmentCell.self, forCellWithReuseIdentifier: "AtcivmentCell")
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.alpha = UIConstants.collectionHiddenAlpha
     }
 
     @objc func handleCardTap() {
@@ -131,10 +164,29 @@ class ProfileViewController: UIViewController {
                 self.cardBottomConstraint.constant = -(self.view.frame.height - self.view.safeAreaInsets.top - UIConstants.cardViewHeight)
             }
             
+            self.collectionView.transform = self.isCarColabsed
+            ? CGAffineTransform(translationX: 0, y: self.view.frame.height / 2)
+            : .identity
+            self.collectionView.alpha = self.isCarColabsed ? 0 : 1
+            
             self.bioLabel.alpha = self.isCarColabsed ? 0 : 1
             
             self.view.layoutIfNeeded()
-        })
+        }) { _ in
+            self.collectionView.isUserInteractionEnabled = !self.isCarColabsed
+        }
+    }
+}
+
+extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return atcivments.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AtcivmentCell", for: indexPath) as! AtcivmentCell
+        cell.configure(with: atcivments[indexPath.item])
+        return cell
     }
 }
 
