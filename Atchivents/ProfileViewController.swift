@@ -36,6 +36,9 @@ private enum UIConstants {
 
 class ProfileViewController: UIViewController {
     
+    private var cardBottomConstraint: NSLayoutConstraint!
+    private var isCarColabsed: Bool = true
+    
     private let cardView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemBackground
@@ -93,13 +96,15 @@ class ProfileViewController: UIViewController {
         cardView.addSubview(profileStackView)
         view.addSubview(cardView)
         
+        cardView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleCardTap)))
+        
         let nameLabelHeight = nameLabel.intrinsicContentSize.height
         let stackViewBottomPadding: CGFloat = 16
         let initialCardPosition: CGFloat = -(nameLabelHeight + stackViewBottomPadding + view.safeAreaInsets.bottom)
-        
+        cardBottomConstraint = cardView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: initialCardPosition)
         
         NSLayoutConstraint.activate([
-            cardView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: initialCardPosition),
+            cardBottomConstraint,
             cardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.leadengInset),
             cardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.leadengInset),
             cardView.heightAnchor.constraint(equalToConstant: UIConstants.cardViewHeight),
@@ -113,6 +118,23 @@ class ProfileViewController: UIViewController {
         ])
     }
 
-
+    @objc func handleCardTap() {
+        isCarColabsed.toggle()
+        
+        UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
+            if self.isCarColabsed {
+                let nameLabelHeight = self.nameLabel.intrinsicContentSize.height
+                let stackViewBottomPadding: CGFloat = 16
+                let targetPosition: CGFloat = -(nameLabelHeight + stackViewBottomPadding + self.view.safeAreaInsets.bottom)
+                self.cardBottomConstraint.constant = targetPosition
+            } else {
+                self.cardBottomConstraint.constant = -(self.view.frame.height - self.view.safeAreaInsets.top - UIConstants.cardViewHeight)
+            }
+            
+            self.bioLabel.alpha = self.isCarColabsed ? 0 : 1
+            
+            self.view.layoutIfNeeded()
+        })
+    }
 }
 
