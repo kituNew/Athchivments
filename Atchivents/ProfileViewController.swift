@@ -98,6 +98,7 @@ class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        UserDefaults.standard.set("1", forKey: "currentWindow")
         view.backgroundColor = .systemCyan
         setupUI()
         setupCollectionView()

@@ -19,8 +19,12 @@ private enum UIConstants {
 
 import UIKit
 
+var currentWindow: String?
+
 class AtcivmentCell: UICollectionViewCell {
-    public var parentView: ProfileViewController
+    var parentView: ProfileViewController
+    var maxValue: Int = 0
+    var currentValue: Int = 0
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -65,6 +69,7 @@ class AtcivmentCell: UICollectionViewCell {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+        addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress)))
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
@@ -88,11 +93,29 @@ class AtcivmentCell: UICollectionViewCell {
         }
         
         descriptionLabel = atcivment.description
+        maxValue = atcivment.maxValue
+        currentValue = atcivment.currentValue
     }
     
     @objc private func handleTap() {
         let alert = UIAlertController(title: "Описание", message: descriptionLabel, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ок", style: .default))
         parentView.presentView(alert: alert)
+    }
+    
+    @objc private func handleLongPress() {
+        currentWindow = UserDefaults.standard.value(forKey: "currentWindow") as? String ?? ""
+        if (currentWindow == "1") {
+            let secondVC = InformationForCellViewController()
+            secondVC.modalPresentationStyle = .fullScreen
+            secondVC.setInformation(title: titleLabel.text,
+                                    description: descriptionLabel,
+                                    iconName: imageView.image,
+                                    color: imageView.tintColor,
+                                    maxValue: maxValue,
+                                    currentValue: currentValue)
+            parentView.navigationController?.pushViewController(secondVC, animated: true)
+            UserDefaults.standard.set(2, forKey: "currentWindow")
+        }
     }
 }
