@@ -12,44 +12,83 @@ struct Atcivment {
     let description: String
     let iconName: String
     let color: UIColor
+    let minValue: Int
+    let maxValue: Int
+    let currentValue: Int
     
     static var demoData: [Atcivment] {
             return [
                 Atcivment(
-                    title: "Мировой исследователь",
-                    description: "Посетил 150+ стран на 6 континентах",
+                    title: "Повелитель мира",
+                    description: "Стал президентом планеты",
                     iconName: "globe.europe.africa.fill",
-                    color: .systemTeal
+                    color: .systemTeal,
+                    minValue: 0,
+                    maxValue: 1,
+                    currentValue: 0
                 ),
                 Atcivment(
-                    title: "Фотограф года",
-                    description: "Выложил 1000+ фотографий с геолокациями",
+                    title: "Джеймс Бонд",
+                    description: "Остноновил ядерую войну голыми руками",
                     iconName: "camera.aperture",
-                    color: .systemOrange
+                    color: .black,
+                    minValue: 0,
+                    maxValue: 1,
+                    currentValue: 0
                 ),
                 Atcivment(
-                    title: "Альпинист",
+                    title: "Покровитель всех высот",
                     description: "Покорил 5 вершин выше 4000 метров",
                     iconName: "mountain.2.fill",
-                    color: .systemIndigo
+                    color: .systemIndigo,
+                    minValue: 0,
+                    maxValue: 5,
+                    currentValue: 3
                 ),
                 Atcivment(
-                    title: "Эко-герой",
-                    description: "Собрал 50 кг мусора во время путешествий",
+                    title: "Вегетарианец",
+                    description: "Вообще не кушает мясо",
                     iconName: "leaf.fill",
-                    color: .systemGreen
+                    color: .systemGreen,
+                    minValue: 0,
+                    maxValue: 1,
+                    currentValue: 1
                 ),
                 Atcivment(
-                    title: "Фуд-эксперт",
+                    title: "Любит понямать",
                     description: "Попробовал 30 национальных блюд",
                     iconName: "fork.knife.circle.fill",
-                    color: .systemRed
+                    color: .systemRed,
+                    minValue: 0,
+                    maxValue: 30,
+                    currentValue: 30
                 ),
                 Atcivment(
-                    title: "Культуролог",
-                    description: "Посетил 20 музеев и исторических мест",
+                    title: "Бог математики",
+                    description: "Стал преподавателем года в Высшей Школе Экономики",
                     iconName: "books.vertical.fill",
-                    color: .systemPurple
+                    color: .systemPurple,
+                    minValue: 0,
+                    maxValue: 1,
+                    currentValue: 1
+                ),
+                Atcivment(
+                    title: "Домовитый",
+                    description: "Очень любит свой дом",
+                    iconName: "house.fill",
+                    color: .systemOrange,
+                    minValue: 0,
+                    maxValue: 1,
+                    currentValue: 1
+                ),
+                Atcivment(
+                    title: "Повелитель баз данных",
+                    description: "Работал с 1000 базами данных",
+                    iconName: "square.stack.3d.down.right.fill",
+                    color: .systemCyan,
+                    minValue: 0,
+                    maxValue: 1000,
+                    currentValue: 567
                 )
             ]
         }

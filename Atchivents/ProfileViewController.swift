@@ -8,7 +8,7 @@
 import UIKit
 
 private enum UserInfo {
-    static let name = "Федор Конюхов"
+    static let name = "Виктор Лопаткин"
     static let bio = "Ну, наверное, в описании не нуждается"
 }
 
@@ -62,7 +62,7 @@ class ProfileViewController: UIViewController {
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = .clear
         view.showsHorizontalScrollIndicator = false
-        view.isScrollEnabled = false
+        view.isScrollEnabled = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -185,8 +185,13 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AtcivmentCell", for: indexPath) as! AtcivmentCell
+        cell.parentView = self
         cell.configure(with: atcivments[indexPath.item])
         return cell
+    }
+    
+    public func presentView(alert: UIAlertController) {
+        present(alert, animated: true)
     }
 }
 

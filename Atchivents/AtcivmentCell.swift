@@ -20,6 +20,8 @@ private enum UIConstants {
 import UIKit
 
 class AtcivmentCell: UICollectionViewCell {
+    public var parentView: ProfileViewController
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -36,7 +38,10 @@ class AtcivmentCell: UICollectionViewCell {
         return label
     }()
     
+    private var descriptionLabel: String?
+    
     override init(frame: CGRect) {
+        self.parentView = ProfileViewController()
         super.init(frame: frame)
         setupUI()
     }
@@ -58,6 +63,8 @@ class AtcivmentCell: UICollectionViewCell {
         stackView.spacing = UIConstants.stackSpacing
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
@@ -73,6 +80,19 @@ class AtcivmentCell: UICollectionViewCell {
         titleLabel.text = atcivment.title
         imageView.image = UIImage(systemName: atcivment.iconName)?
             .withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = atcivment.color
+        
+        if (atcivment.currentValue == atcivment.maxValue) {
+            imageView.tintColor = atcivment.color
+        } else {
+            imageView.tintColor = UIColor.systemGray
+        }
+        
+        descriptionLabel = atcivment.description
+    }
+    
+    @objc private func handleTap() {
+        let alert = UIAlertController(title: "Описание", message: descriptionLabel, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок", style: .default))
+        parentView.presentView(alert: alert)
     }
 }
