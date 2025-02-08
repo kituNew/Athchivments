@@ -130,7 +130,7 @@ extension InformationForCellViewController {
     public func setInformation (cell: AchievementCell) {
         titleLabel.text = cell.getTitle()
         imageView.image = cell.getImage()
-        imageView.tintColor = cell.getCollor()
+        imageView.tintColor = cell.getColor()
         descriptionLabel.text = cell.getDescription()
         self.maxValue = cell.getMaxValue()
         self.currentValue = cell.getCurrentValue()

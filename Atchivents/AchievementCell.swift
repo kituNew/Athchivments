@@ -19,6 +19,11 @@ private enum UIConstants {
 
 import UIKit
 
+protocol AchievementCellDelegate: AnyObject {
+    func handleTap(cell: AchievementCell)
+    func handleLongPress(cell: AchievementCell)
+}
+
 final class AchievementCell: UICollectionViewCell {
     public var delegate: AchievementCellDelegate?
     private var maxValue: Int = 0
@@ -110,7 +115,7 @@ final class AchievementCell: UICollectionViewCell {
         return imageView.image
     }
     
-    public func getCollor() -> UIColor {
+    public func getColor() -> UIColor {
         return imageView.tintColor
     }
     
