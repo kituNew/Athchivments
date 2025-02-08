@@ -19,10 +19,8 @@ private enum UIConstants {
 
 import UIKit
 
-var currentWindow: String?
-
-class AtcivmentCell: UICollectionViewCell {
-    var parentView: ProfileViewController
+final class AtcivmentCell: UICollectionViewCell {
+    weak var delegate: ProfileViewController?
     var maxValue: Int = 0
     var currentValue: Int = 0
     
@@ -45,7 +43,6 @@ class AtcivmentCell: UICollectionViewCell {
     private var descriptionLabel: String?
     
     override init(frame: CGRect) {
-        self.parentView = ProfileViewController()
         super.init(frame: frame)
         setupUI()
     }
@@ -85,37 +82,22 @@ class AtcivmentCell: UICollectionViewCell {
         titleLabel.text = atcivment.title
         imageView.image = UIImage(systemName: atcivment.iconName)?
             .withRenderingMode(.alwaysTemplate)
-        
-        if (atcivment.currentValue == atcivment.maxValue) {
-            imageView.tintColor = atcivment.color
-        } else {
-            imageView.tintColor = UIColor.systemGray
-        }
-        
+        imageView.tintColor = atcivment.currentValue == atcivment.maxValue ? atcivment.color : UIColor.systemGray
         descriptionLabel = atcivment.description
         maxValue = atcivment.maxValue
         currentValue = atcivment.currentValue
     }
     
     @objc private func handleTap() {
-        let alert = UIAlertController(title: "Описание", message: descriptionLabel, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ок", style: .default))
-        parentView.presentView(alert: alert)
+        delegate?.makeAlert(descriptionLabel: descriptionLabel)
     }
     
     @objc private func handleLongPress() {
-        currentWindow = UserDefaults.standard.value(forKey: "currentWindow") as? String ?? ""
-        if (currentWindow == "1") {
-            let secondVC = InformationForCellViewController()
-            secondVC.modalPresentationStyle = .fullScreen
-            secondVC.setInformation(title: titleLabel.text,
-                                    description: descriptionLabel,
-                                    iconName: imageView.image,
-                                    color: imageView.tintColor,
-                                    maxValue: maxValue,
-                                    currentValue: currentValue)
-            parentView.navigationController?.pushViewController(secondVC, animated: true)
-            UserDefaults.standard.set(2, forKey: "currentWindow")
-        }
+        delegate?.makeViewOfCell(title: titleLabel.text,
+                                 description: descriptionLabel,
+                                 iconName: imageView.image,
+                                 color: imageView.tintColor,
+                                 maxValue: maxValue,
+                                 currentValue: currentValue)
     }
 }

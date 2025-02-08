@@ -17,6 +17,13 @@ private enum UIConstants {
     static let stackPadding: CGFloat = 100
     static let titleLabelFont: UIFont = .systemFont(ofSize: 14, weight: .semibold)
     static let titleLabelTextColor: UIColor = .black
+    
+    static let cardViewHeight: CGFloat = 150
+    static let cardViewDownForImage: CGFloat = 150
+    static let cardViewPadding: CGFloat = 50
+    static let imageDovnForView: CGFloat = 185
+    
+    static let keyForGetWindow: String = "currentWindow"
 }
 
 class InformationForCellViewController: UIViewController {
@@ -65,8 +72,15 @@ class InformationForCellViewController: UIViewController {
     private var progressView: UIProgressView = {
         let progressView = UIProgressView()
         progressView.progressViewStyle = .default
-        //progressView.translatesAutoresizingMaskIntoConstraints = false
         return progressView
+    }()
+    
+    private var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = UIConstants.stackSpacing
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     
     override func viewDidLoad() {
@@ -77,11 +91,9 @@ class InformationForCellViewController: UIViewController {
     
     func showCell() {
         progressView.progress = Float(currentValue) / Float(maxValue)
-        let stackView = UIStackView(arrangedSubviews: [progressView, titleLabel, descriptionLabel])
-        stackView.axis = .vertical
-        stackView.spacing = UIConstants.stackSpacing
-        
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        [progressView, titleLabel, descriptionLabel].forEach {
+            stackView.addArrangedSubview( $0)
+        }
         
         view.addSubview(imageView)
         cardView.addSubview(stackView)
@@ -89,24 +101,23 @@ class InformationForCellViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UIConstants.imageHeight + 35),
+            imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UIConstants.imageDovnForView),
             imageView.heightAnchor.constraint(equalToConstant: UIConstants.imageHeight),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.stackPadding),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.stackPadding),
             
             cardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cardView.centerYAnchor.constraint(equalTo: imageView.bottomAnchor, constant: UIConstants.imageHeight + 90),
-            cardView.heightAnchor.constraint(equalToConstant: 150),
-            cardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.stackPadding/2),
-            cardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.stackPadding/2),
+            cardView.centerYAnchor.constraint(equalTo: imageView.bottomAnchor, constant: UIConstants.cardViewDownForImage),
+            cardView.heightAnchor.constraint(equalToConstant: UIConstants.cardViewHeight),
+            cardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.cardViewPadding),
+            cardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.cardViewPadding),
             
             stackView.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor)
         ])
     }
     
-    func setInformation
-    (
+    func setInformation (
         title: String?,
         description: String?,
         iconName: UIImage?,
@@ -120,11 +131,10 @@ class InformationForCellViewController: UIViewController {
         descriptionLabel.text = description
         self.maxValue = maxValue ?? 1
         self.currentValue = currentValue ?? 0
-            
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UserDefaults.standard.set("1", forKey: "currentWindow")
+        UserDefaults.standard.set("1", forKey: UIConstants.keyForGetWindow)
     }
 }

@@ -32,7 +32,11 @@ private enum UIConstants {
     
     static let leadengInset: CGFloat = 16
     static let cardViewHeight: CGFloat = 200
+    
+    static let keyForGetWindow: String = "currentWindow"
 }
+
+var currentWindow: String?
 
 class ProfileViewController: UIViewController {
     private var cardBottomConstraint: NSLayoutConstraint!
@@ -98,7 +102,7 @@ class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        UserDefaults.standard.set("1", forKey: "currentWindow")
+        UserDefaults.standard.set("1", forKey: UIConstants.keyForGetWindow)
         view.backgroundColor = .systemCyan
         setupUI()
         setupCollectionView()
@@ -186,13 +190,36 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AtcivmentCell", for: indexPath) as! AtcivmentCell
-        cell.parentView = self
+        cell.delegate = self
         cell.configure(with: atcivments[indexPath.item])
         return cell
     }
     
-    public func presentView(alert: UIAlertController) {
+    public func makeAlert(descriptionLabel: String?) {
+        let alert = UIAlertController(title: "Описание", message: descriptionLabel, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок", style: .default))
         present(alert, animated: true)
+    }
+    
+    public func makeViewOfCell (title: String?,
+                                description: String?,
+                                iconName: UIImage?,
+                                color: UIColor?,
+                                maxValue: Int?,
+                                currentValue: Int?) {
+        currentWindow = UserDefaults.standard.value(forKey: UIConstants.keyForGetWindow) as? String ?? ""
+        if (currentWindow == "1") {
+            let viewOfCellInformation = InformationForCellViewController()
+            viewOfCellInformation.modalPresentationStyle = .fullScreen
+            viewOfCellInformation.setInformation(title: title,
+                                    description: description,
+                                    iconName: iconName,
+                                    color: color,
+                                    maxValue: maxValue,
+                                    currentValue: currentValue)
+            navigationController?.pushViewController(viewOfCellInformation, animated: true)
+            UserDefaults.standard.set(2, forKey: UIConstants.keyForGetWindow)
+        }
     }
 }
 
