@@ -19,10 +19,10 @@ private enum UIConstants {
 
 import UIKit
 
-final class AtcivmentCell: UICollectionViewCell {
-    weak var delegate: ProfileViewController?
-    var maxValue: Int = 0
-    var currentValue: Int = 0
+final class AchievementCell: UICollectionViewCell {
+    public var delegate: AchievementCellDelegate?
+    private var maxValue: Int = 0
+    private var currentValue: Int = 0
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -78,7 +78,7 @@ final class AtcivmentCell: UICollectionViewCell {
         ])
     }
     
-    func configure(with atcivment: Atcivment) {
+    public func configure(with atcivment: Achievement) {
         titleLabel.text = atcivment.title
         imageView.image = UIImage(systemName: atcivment.iconName)?
             .withRenderingMode(.alwaysTemplate)
@@ -88,16 +88,37 @@ final class AtcivmentCell: UICollectionViewCell {
         currentValue = atcivment.currentValue
     }
     
-    @objc private func handleTap() {
-        delegate?.makeAlert(descriptionLabel: descriptionLabel)
+    @objc private func handleTap(cell: AchievementCell) {
+        delegate?.handleTap(cell: self)
     }
     
-    @objc private func handleLongPress() {
-        delegate?.makeViewOfCell(title: titleLabel.text,
-                                 description: descriptionLabel,
-                                 iconName: imageView.image,
-                                 color: imageView.tintColor,
-                                 maxValue: maxValue,
-                                 currentValue: currentValue)
+    @objc private func handleLongPress(cell: AchievementCell) {
+        delegate?.handleLongPress(cell: self)
+    }
+    
+    
+    
+    public func getTitle() -> String {
+        return titleLabel.text ?? ""
+    }
+    
+    public func getDescription() -> String {
+        return descriptionLabel ?? ""
+    }
+    
+    public func getImage() -> UIImage? {
+        return imageView.image
+    }
+    
+    public func getCollor() -> UIColor {
+        return imageView.tintColor
+    }
+    
+    public func getMaxValue() -> Int {
+        return maxValue
+    }
+    
+    public func getCurrentValue() -> Int {
+        return currentValue
     }
 }

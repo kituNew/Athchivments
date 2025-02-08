@@ -43,7 +43,7 @@ class ProfileViewController: UIViewController {
     private var collectionViewTopConstraint: NSLayoutConstraint!
     private var isCarColabsed: Bool = true
     
-    private let atcivments = Atcivment.demoData
+    private let atcivments = Achievement.demoData
     
     private let cardView: UIView = {
         let view = UIView()
@@ -150,7 +150,7 @@ class ProfileViewController: UIViewController {
     }
     
     private func setupCollectionView() {
-        collectionView.register(AtcivmentCell.self, forCellWithReuseIdentifier: "AtcivmentCell")
+        collectionView.register(AchievementCell.self, forCellWithReuseIdentifier: "AchievementCell")
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.alpha = UIConstants.collectionHiddenAlpha
@@ -189,34 +189,27 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AtcivmentCell", for: indexPath) as! AtcivmentCell
-        cell.delegate = self
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AchievementCell", for: indexPath) as! AchievementCell
         cell.configure(with: atcivments[indexPath.item])
+        cell.delegate = self
         return cell
     }
+}
+
+extension ProfileViewController: AchievementCellDelegate {
     
-    public func makeAlert(descriptionLabel: String?) {
-        let alert = UIAlertController(title: "Описание", message: descriptionLabel, preferredStyle: .alert)
+    func handleTap(cell: AchievementCell) {
+        let alert = UIAlertController(title: "Описание", message: cell.getDescription(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ок", style: .default))
         present(alert, animated: true)
     }
     
-    public func makeViewOfCell (title: String?,
-                                description: String?,
-                                iconName: UIImage?,
-                                color: UIColor?,
-                                maxValue: Int?,
-                                currentValue: Int?) {
+    func handleLongPress(cell: AchievementCell) {
         currentWindow = UserDefaults.standard.value(forKey: UIConstants.keyForGetWindow) as? String ?? ""
-        if (currentWindow == "1") {
+        if currentWindow == "1" {
             let viewOfCellInformation = InformationForCellViewController()
             viewOfCellInformation.modalPresentationStyle = .fullScreen
-            viewOfCellInformation.setInformation(title: title,
-                                    description: description,
-                                    iconName: iconName,
-                                    color: color,
-                                    maxValue: maxValue,
-                                    currentValue: currentValue)
+            viewOfCellInformation.setInformation(cell: cell)
             navigationController?.pushViewController(viewOfCellInformation, animated: true)
             UserDefaults.standard.set(2, forKey: UIConstants.keyForGetWindow)
         }

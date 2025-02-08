@@ -22,14 +22,15 @@ private enum UIConstants {
     static let cardViewDownForImage: CGFloat = 150
     static let cardViewPadding: CGFloat = 50
     static let imageDovnForView: CGFloat = 185
+    static let stackLeftPadding: CGFloat = 20
     
     static let keyForGetWindow: String = "currentWindow"
 }
 
-class InformationForCellViewController: UIViewController {
+final class InformationForCellViewController: UIViewController {
     
-    var maxValue: Int = 1
-    var currentValue: Int = 0
+    private var maxValue: Int = 1
+    private var currentValue: Int = 0
     
     private let cardView: UIView = {
         let view = UIView()
@@ -60,7 +61,7 @@ class InformationForCellViewController: UIViewController {
         return label
     }()
     
-    private var descriptionLabel: UILabel = {
+    private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIConstants.titleLabelFont
         label.textAlignment = .center
@@ -69,13 +70,13 @@ class InformationForCellViewController: UIViewController {
         return label
     }()
     
-    private var progressView: UIProgressView = {
+    private let progressView: UIProgressView = {
         let progressView = UIProgressView()
         progressView.progressViewStyle = .default
         return progressView
     }()
     
-    private var stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = UIConstants.stackSpacing
@@ -89,10 +90,15 @@ class InformationForCellViewController: UIViewController {
         showCell()
     }
     
-    func showCell() {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UserDefaults.standard.set("1", forKey: UIConstants.keyForGetWindow)
+    }
+    
+    private func showCell() {
         progressView.progress = Float(currentValue) / Float(maxValue)
         [progressView, titleLabel, descriptionLabel].forEach {
-            stackView.addArrangedSubview( $0)
+            stackView.addArrangedSubview($0)
         }
         
         view.addSubview(imageView)
@@ -113,28 +119,20 @@ class InformationForCellViewController: UIViewController {
             cardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.cardViewPadding),
             
             stackView.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor)
+            stackView.centerYAnchor.constraint(equalTo: cardView.centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: UIConstants.stackLeftPadding),
+            stackView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -UIConstants.stackLeftPadding),
         ])
     }
-    
-    func setInformation (
-        title: String?,
-        description: String?,
-        iconName: UIImage?,
-        color: UIColor?,
-        maxValue: Int?,
-        currentValue: Int?
-    ) {
-        titleLabel.text = title
-        imageView.image = iconName
-        imageView.tintColor = color
-        descriptionLabel.text = description
-        self.maxValue = maxValue ?? 1
-        self.currentValue = currentValue ?? 0
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        UserDefaults.standard.set("1", forKey: UIConstants.keyForGetWindow)
+}
+
+extension InformationForCellViewController {
+    public func setInformation (cell: AchievementCell) {
+        titleLabel.text = cell.getTitle()
+        imageView.image = cell.getImage()
+        imageView.tintColor = cell.getCollor()
+        descriptionLabel.text = cell.getDescription()
+        self.maxValue = cell.getMaxValue()
+        self.currentValue = cell.getCurrentValue()
     }
 }

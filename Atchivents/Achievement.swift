@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Atcivment {
+struct Achievement {
     let title: String
     let description: String
     let iconName: String
@@ -15,9 +15,9 @@ struct Atcivment {
     let maxValue: Int
     let currentValue: Int
     
-    static var demoData: [Atcivment] {
+    static var demoData: [Achievement] {
             return [
-                Atcivment(
+                Achievement(
                     title: "Повелитель мира",
                     description: "Стал президентом планеты",
                     iconName: "globe.europe.africa.fill",
@@ -25,7 +25,7 @@ struct Atcivment {
                     maxValue: 1,
                     currentValue: 0
                 ),
-                Atcivment(
+                Achievement(
                     title: "Джеймс Бонд",
                     description: "Остноновил ядерую войну голыми руками",
                     iconName: "camera.aperture",
@@ -33,7 +33,7 @@ struct Atcivment {
                     maxValue: 1,
                     currentValue: 0
                 ),
-                Atcivment(
+                Achievement(
                     title: "Покровитель всех высот",
                     description: "Покорил 5 вершин выше 4000 метров",
                     iconName: "mountain.2.fill",
@@ -41,7 +41,7 @@ struct Atcivment {
                     maxValue: 5,
                     currentValue: 3
                 ),
-                Atcivment(
+                Achievement(
                     title: "Вегетарианец",
                     description: "Вообще не кушает мясо",
                     iconName: "leaf.fill",
@@ -49,7 +49,7 @@ struct Atcivment {
                     maxValue: 1,
                     currentValue: 1
                 ),
-                Atcivment(
+                Achievement(
                     title: "Любит понямать",
                     description: "Попробовал 30 национальных блюд",
                     iconName: "fork.knife.circle.fill",
@@ -57,7 +57,7 @@ struct Atcivment {
                     maxValue: 30,
                     currentValue: 30
                 ),
-                Atcivment(
+                Achievement(
                     title: "Бог математики",
                     description: "Стал преподавателем года в Высшей Школе Экономики",
                     iconName: "books.vertical.fill",
@@ -65,7 +65,7 @@ struct Atcivment {
                     maxValue: 1,
                     currentValue: 1
                 ),
-                Atcivment(
+                Achievement(
                     title: "Домовитый",
                     description: "Очень любит свой дом",
                     iconName: "house.fill",
@@ -73,7 +73,7 @@ struct Atcivment {
                     maxValue: 1,
                     currentValue: 1
                 ),
-                Atcivment(
+                Achievement(
                     title: "Повелитель баз данных",
                     description: "Работал с 1000 базами данных",
                     iconName: "square.stack.3d.down.right.fill",
