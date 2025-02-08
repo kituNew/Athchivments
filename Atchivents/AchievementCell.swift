@@ -19,7 +19,16 @@ private enum UIConstants {
 
 import UIKit
 
-class AtcivmentCell: UICollectionViewCell {
+protocol AchievementCellDelegate: AnyObject {
+    func handleTap(cell: AchievementCell)
+    func handleLongPress(cell: AchievementCell)
+}
+
+final class AchievementCell: UICollectionViewCell {
+    public var delegate: AchievementCellDelegate?
+    private var maxValue: Int = 0
+    private var currentValue: Int = 0
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -35,6 +44,8 @@ class AtcivmentCell: UICollectionViewCell {
         label.textColor = UIConstants.titleLabelTextColor
         return label
     }()
+    
+    private var descriptionLabel: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,6 +69,9 @@ class AtcivmentCell: UICollectionViewCell {
         stackView.spacing = UIConstants.stackSpacing
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+        addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress)))
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
@@ -69,10 +83,47 @@ class AtcivmentCell: UICollectionViewCell {
         ])
     }
     
-    func configure(with atcivment: Atcivment) {
+    public func configure(with atcivment: Achievement) {
         titleLabel.text = atcivment.title
         imageView.image = UIImage(systemName: atcivment.iconName)?
             .withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = atcivment.color
+        imageView.tintColor = atcivment.currentValue == atcivment.maxValue ? atcivment.color : UIColor.systemGray
+        descriptionLabel = atcivment.description
+        maxValue = atcivment.maxValue
+        currentValue = atcivment.currentValue
+    }
+    
+    @objc private func handleTap(cell: AchievementCell) {
+        delegate?.handleTap(cell: self)
+    }
+    
+    @objc private func handleLongPress(cell: AchievementCell) {
+        delegate?.handleLongPress(cell: self)
+    }
+    
+    
+    
+    public func getTitle() -> String {
+        return titleLabel.text ?? ""
+    }
+    
+    public func getDescription() -> String {
+        return descriptionLabel ?? ""
+    }
+    
+    public func getImage() -> UIImage? {
+        return imageView.image
+    }
+    
+    public func getColor() -> UIColor {
+        return imageView.tintColor
+    }
+    
+    public func getMaxValue() -> Int {
+        return maxValue
+    }
+    
+    public func getCurrentValue() -> Int {
+        return currentValue
     }
 }

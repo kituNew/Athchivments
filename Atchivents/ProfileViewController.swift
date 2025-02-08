@@ -8,7 +8,7 @@
 import UIKit
 
 private enum UserInfo {
-    static let name = "Федор Конюхов"
+    static let name = "Виктор Лопаткин"
     static let bio = "Ну, наверное, в описании не нуждается"
 }
 
@@ -32,14 +32,18 @@ private enum UIConstants {
     
     static let leadengInset: CGFloat = 16
     static let cardViewHeight: CGFloat = 200
+    
+    static let keyForGetWindow: String = "currentWindow"
 }
+
+var currentWindow: String?
 
 class ProfileViewController: UIViewController {
     private var cardBottomConstraint: NSLayoutConstraint!
     private var collectionViewTopConstraint: NSLayoutConstraint!
     private var isCarColabsed: Bool = true
     
-    private let atcivments = Atcivment.demoData
+    private let atcivments = Achievement.demoData
     
     private let cardView: UIView = {
         let view = UIView()
@@ -62,7 +66,7 @@ class ProfileViewController: UIViewController {
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = .clear
         view.showsHorizontalScrollIndicator = false
-        view.isScrollEnabled = false
+        view.isScrollEnabled = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -98,6 +102,7 @@ class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        UserDefaults.standard.set("1", forKey: UIConstants.keyForGetWindow)
         view.backgroundColor = .systemCyan
         setupUI()
         setupCollectionView()
@@ -145,7 +150,7 @@ class ProfileViewController: UIViewController {
     }
     
     private func setupCollectionView() {
-        collectionView.register(AtcivmentCell.self, forCellWithReuseIdentifier: "AtcivmentCell")
+        collectionView.register(AchievementCell.self, forCellWithReuseIdentifier: "AchievementCell")
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.alpha = UIConstants.collectionHiddenAlpha
@@ -184,9 +189,30 @@ extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AtcivmentCell", for: indexPath) as! AtcivmentCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AchievementCell", for: indexPath) as! AchievementCell
         cell.configure(with: atcivments[indexPath.item])
+        cell.delegate = self
         return cell
+    }
+}
+
+extension ProfileViewController: AchievementCellDelegate {
+    
+    func handleTap(cell: AchievementCell) {
+        let alert = UIAlertController(title: "Описание", message: cell.getDescription(), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ок", style: .default))
+        present(alert, animated: true)
+    }
+    
+    func handleLongPress(cell: AchievementCell) {
+        currentWindow = UserDefaults.standard.value(forKey: UIConstants.keyForGetWindow) as? String ?? ""
+        if currentWindow == "1" {
+            let viewOfCellInformation = InformationForCellViewController()
+            viewOfCellInformation.modalPresentationStyle = .fullScreen
+            viewOfCellInformation.setInformation(cell: cell)
+            navigationController?.pushViewController(viewOfCellInformation, animated: true)
+            UserDefaults.standard.set(2, forKey: UIConstants.keyForGetWindow)
+        }
     }
 }
 
